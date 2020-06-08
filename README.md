@@ -4,6 +4,6 @@ Groupe B2a_A composé de :
 
 Dimitri LEFOLL
 Florian COISSAC
-Rodrigo Queiroz
+Rodrigo Queiroz Pinho Dos Santos
 Samy Chekoury
 Ilies Zouaoui
