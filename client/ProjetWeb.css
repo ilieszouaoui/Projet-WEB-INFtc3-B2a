@@ -1,0 +1,17 @@
+main {
+  margin: 20px;
+  padding: 10px;
+  border: 2px solid #666;
+  border-radius: 5px;
+  box-shadow: 3px 3px 3px #444;
+  background: linear-gradient(150deg, turquoise , blue);
+}
+h1 {
+  margin-top: 0;
+  color: dark;
+  font-family: Haettenschweiler;
+  text-shadow: 1px 1px white;
+}
+ul {
+  font-family: Arial;
+}
