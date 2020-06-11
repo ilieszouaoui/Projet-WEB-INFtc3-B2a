@@ -161,9 +161,13 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
       body += '<main>'
       body += '<h1>{}</h1>'.format(r['name'])
       body += '<ul>'
+      body += '<li>{}: {}</li>'.format('Leader',r['leader'])
+      body += '<li>{}: {} km2</li>'.format('Superficie',r['area_km2'])
       body += '<li>{}: {}</li>'.format('Capital',r['capital'])
       body += '<li>{}: {:.3f}</li>'.format('Latitude',r['latitude'])
       body += '<li>{}: {:.3f}</li>'.format('Longitude',r['longitude'])
+      body += '<li>{}: {:.3f}</li>'.format('Coefficient de Gini',r['gini'])
+      body += '<li>{}: {:.3f}</li>'.format('Indice de developpement humain (IDH)',r['hdi'])
       body += '</ul>'
       body += '</main>'
 
@@ -194,7 +198,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
 #
 # Ouverture d'une connexion avec la base de données
 #
-conn = sqlite3.connect('africa.sqlite')
+conn = sqlite3.connect('africa_complet.sqlite')
 
 # Pour accéder au résultat des requêtes sous forme d'un dictionnaire
 conn.row_factory = sqlite3.Row
