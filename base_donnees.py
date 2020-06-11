@@ -41,31 +41,80 @@ def get_capital(info):
 def get_name(info):
     return info['conventional_long_name']
 
+#####
+
+def get_leader(info):
+    try:
+        lead=info['leader_name1']
+        new_lead = ''
+        flag = False #indique si on a déjà commencé a ecrire le nom du leader
+        for c in (lead): #on enleve la formatation [[]]
+            if c == '[' : flag = True;
+            if flag and (c ==']' or c == '|'): break
+            elif flag and c != '[': new_lead += c
+        return new_lead
+    
+    except:
+        print(' Could not parse leader de {}'.format(info['conventional_long_name']))
+        return None
+             
+def get_hdi(info):
+    try:
+        return info['HDI']
+    except:
+        print(' Could not parse HDI de {}'.format(info['conventional_long_name']))
+        return None
+
+def get_gini(info):
+    try:
+        return info['Gini']
+    except:
+        print(' Could not parse gini de {}'.format(info['conventional_long_name']))
+        return None
+
+def get_area(info):
+    try:
+        if ',' not in info['area_km2']: #s'il n'y a aucune virgule
+            return info['area_km2']
+        else: #il faut enlever les virguler du numbre
+            new_area = ''
+            for c in info['area_km2']:
+                if c.isalnum(): new_area += c
+            return new_area
+    except:
+        print(' Could not parse area de {}'.format(info['conventional_long_name']))
+        return None
+
+#####
+
 def save_country(conn,country,info):    
     # préparation de la commande SQL
     c = conn.cursor()
-    sql = 'INSERT INTO countries VALUES (?, ?, ?, ?, ?)'
+    sql = 'INSERT INTO countries VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)'
 
     # les infos à enregistrer
     name = get_name(info)
     capital = get_capital(info)
     coords = get_coords(info)
-
+    leader = get_leader(info)
+    hdi = get_hdi(info)
+    gini = get_gini(info)
+    area = get_area(info)
+    
     # soumission de la commande (noter que le second argument est un tuple)
     if coords != None:
-        c.execute(sql,(country, name, capital, coords['lat'], coords['lon']))
+        c.execute(sql,(country.rstrip('.json.'), name, capital, round(float(coords['lat']), 2), round(float(coords['lon']), 2), leader, hdi, gini, area))  #on enleve le .json du nom du pays
         conn.commit()
     else:
-        c.execute(sql,(country, name, capital, None, None))
+        c.execute(sql,(country.rstrip('.json.'), name, capital, None, None, leader, hdi, gini, area)) #on enleve le .json du nom du pays
         conn.commit() 
-    
+        
 # création de la base de donnees
 with ZipFile('africa.zip','r') as z:
     # liste des documents contenus dans le fichier zip
-    conn = sqlite3.connect('africa.sqlite')
+    conn = sqlite3.connect('africa_complet.sqlite')
     # infobox de l'un des pays
     for country in z.namelist():
         info = json.loads(z.read(country))
         save_country(conn, country, info)
         print(country, 'saved successfully')
-    
