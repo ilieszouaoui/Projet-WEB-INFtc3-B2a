@@ -101,12 +101,20 @@ def save_country(conn,country,info):
     gini = get_gini(info)
     area = get_area(info)
     
+    new_country = '' #on enleve le .json et le _
+    for char in country:
+        if char.isalnum(): new_country += char
+        elif char =='_': new_country += ' '
+        elif char =='.':
+            break
+    country = new_country
+        
     # soumission de la commande (noter que le second argument est un tuple)
     if coords != None:
-        c.execute(sql,(country.rstrip('.json.'), name, capital, round(float(coords['lat']), 2), round(float(coords['lon']), 2), leader, hdi, gini, area))  #on enleve le .json du nom du pays
+        c.execute(sql,(country, name, capital, round(float(coords['lat']), 2), round(float(coords['lon']), 2), leader, hdi, gini, area))  #on enleve le .json du nom du pays
         conn.commit()
     else:
-        c.execute(sql,(country.rstrip('.json.'), name, capital, None, None, leader, hdi, gini, area)) #on enleve le .json du nom du pays
+        c.execute(sql,(country, name, capital, None, None, leader, hdi, gini, area)) #on enleve le .json du nom du pays
         conn.commit() 
         
 # création de la base de donnees
