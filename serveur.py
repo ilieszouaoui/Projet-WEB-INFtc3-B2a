@@ -94,7 +94,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
 
     # on renvoie une liste de dictionnaires au format JSON
     data = [ {k:a[k] for k in a.keys()} for a in r]
-    json_data = json.dumps(data, indent=4)
+    json_data = json.dumps(data, indent=8)
     headers = [('Content-Type','application/json')]
     print(json_data)
     self.send(json_data,headers)
@@ -112,13 +112,13 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
     # on renvoie un dictionnaire au format JSON
     else:
       data = {k:r[k] for k in r.keys()}
-      json_data = json.dumps(data, indent=4)
+      json_data = json.dumps(data, indent=8)
       headers = [('Content-Type','application/json')]
       self.send(json_data,headers)
     
   def db_get_countries(self):
     c = conn.cursor()
-    sql = 'SELECT wp, capital, latitude, longitude from countries WHERE latitude IS NOT null'
+    sql = 'SELECT wp, leader, area_km2, capital, latitude, longitude, gini, hdi from countries WHERE latitude IS NOT null'
     c.execute(sql)
     return c.fetchall()
 

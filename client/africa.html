@@ -1,56 +1,10 @@
 <!DOCTYPE html>
-<title>TD3-s7.html</title>
+<title>Carte Dynamique de l'Afrique</title>
 <script src="leaflet.js"> // Bibliothèque Leaflet : http://leafletjs.com/ </script>
 <link rel='stylesheet' type="text/css" href='https://fonts.googleapis.com/css?family=Roboto'>
 <link rel="stylesheet" type="text/css" href="leaflet.css" /> 
+<link rel="stylesheet" type="text/css" href="ProjetWeb.css" /> 
 <meta charset='utf-8'>
-<style>
-body {
-  font-family: Roboto, sans-serif;
-}
-main {
-  margin: 20px;
-  padding: 10px;
-  border: 1px solid #666;
-  border-radius: 5px;
-  box-shadow: 3px 3px 3px #444;
-  background: linear-gradient(0deg, #ffa50040, orange);
-}
-h1 {
-  margin-top: 0;
-  color: maroon;
-  font-family: Haettenschweiler;
-  text-shadow: 1px 1px white;
-}
-label {
-  display: block;
-  padding-bottom: 0.5em;
-}
-label span {
-  display: inline-block;
-  width : 6em;
-}
-.label {
-  display: inline-block;
-  width : 7em;
-}
-option[disabled] {
-  font-style: italic;
-  color: #ccc;
-}
-.hidden {
-  display: none;
-}
-#map {
-  width:750px;
-  height:500px;
-  border: 1px solid black;
-  float: right;
-}
-#left {
-  min-height:502px;
-}
-</style>
 
 <main>
 
@@ -59,7 +13,7 @@ option[disabled] {
 
 <!-- partie gauche de l'écran -->
 <div id="left">
-<h1>Countries of the world</h1>
+<h1>Countries of Africa</h1>
 
 <div>
 <label><span> </span> <button id="bouton">Commencer</button>
@@ -68,10 +22,13 @@ option[disabled] {
 <!-- Zone pour l'affichage dynamique des descriptions -->
 <div id="country_data" class="hidden">
  <h1 id="country_name"></h1>
- <div><span class="label">Continent:</span><span class="value" id="continent"></span></div>
+ <div><span class="label">Leader:</span><span class="value" id="leader"></span></div>
+ <div><span class="label">Surface (in km2):</span><span class="value" id="area_km2"></span></div>
  <div><span class="label">Capital:</span><span class="value" id="capital"></span></div>
  <div><span class="label">Latitude:</span><span class="value" id="latitude"></span></div>
  <div><span class="label">Longitude:</span><span class="value" id="longitude"></span></div>
+ <div><span class="label">Gini coefficient:</span><span class="value" id="gini"></span></div>
+ <div><span class="label">Human Development Index (HDI):</span><span class="value" id="hdi"></span></div>
  <div><span class="label">Read more on:</span><a id="wp" href="">wikipedia</a></div>
 </div>
 
@@ -82,6 +39,19 @@ option[disabled] {
 
 </div>
 </main>
+
+
+<div class="conseil">
+<h1>Conseils d'utilisation : </h1>
+
+<ol>
+<li> Initialiser la carte en cliquant sur le bouton "commencer"</li>
+<li> Sélectionner l'icône sur la capitale d'un pays</li>
+<li> Prendre connaissance des informations sur le pays</li>
+<li> Cliquer sur le lien Wikipedia pour plus d'informations</li>
+</ol>
+
+<div>
 
 
 
@@ -182,9 +152,13 @@ function display_data(response) {
   window.country_data.classList.remove('hidden');
   window.country_data.style.display = 'block';
   window.country_name.textContent = data.name;
+  window.leader.textContent = data.leader;
+  window.area_km2.textContent = data.area_km2;
   window.capital.textContent = data.capital;
   window.latitude.textContent = data.latitude.toFixed(3);
   window.longitude.textContent = data.longitude.toFixed(3);
+  window.gini.textContent = data.gini;
+  window.hdi.textContent = data.hdi;
   window.wp.href = 'https://en.wikipedia.org/wiki/'+data.wp;
   window.continent.textContent = data.continent.split(',').map(c => {
     return c.charAt(0).toUpperCase() + c.slice(1);
