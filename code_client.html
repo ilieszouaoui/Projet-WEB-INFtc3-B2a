@@ -1,0 +1,237 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1671\cocoasubrtf600
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red21\green23\blue25;\red237\green236\blue236;\red0\green0\blue0;
+}
+{\*\expandedcolortbl;;\cssrgb\c10980\c11765\c12941;\cssrgb\c94510\c94118\c94118;\cssrgb\c0\c0\c0;
+}
+\paperw11900\paperh16840\margl1440\margr1440\vieww10800\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs30 \cf2 \cb3 \expnd0\expndtw0\kerning0
+<!DOCTYPE html>\cf0 \cb1 \
+\cf2 \cb3 <title>TD3-s7.html</title>\cf0 \cb1 \
+\cf2 \cb3 <script src="leaflet.js"> // Biblioth\'e8que Leaflet : {\field{\*\fldinst{HYPERLINK "http://leafletjs.com/?fbclid=IwAR19DPFd0l2vxWnsuqEaiTr8ODTIJbwe1MzYdAUEIfJ162pEEPzMwaPK4i0"}}{\fldrslt \ul http://leafletjs.com/}} </script>\cf0 \cb1 \
+\cf2 \cb3 <link rel='stylesheet' type="text/css" href='{\field{\*\fldinst{HYPERLINK "https://fonts.googleapis.com/css?family=Roboto&fbclid=IwAR02gq2IF1a4AWIwuupVECH6IE8ZgVglvSJO6KLiCag3OFHUL15bdPzoSQw"}}{\fldrslt \ul https://fonts.googleapis.com/css?family=Roboto}}'>\cf0 \cb1 \
+\cf2 \cb3 <link rel="stylesheet" type="text/css" href="leaflet.css" /> \cf0 \cb1 \
+\cf2 \cb3 <meta charset='utf-8'>\cf0 \cb1 \
+\cf2 \cb3 <style>\cf0 \cb1 \
+\cf2 \cb3 body \{\cf0 \cb1 \
+\cf2 \cb3   font-family: Roboto, sans-serif;\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\cf2 \cb3 main \{\cf0 \cb1 \
+\cf2 \cb3   margin: 20px;\cf0 \cb1 \
+\cf2 \cb3   padding: 10px;\cf0 \cb1 \
+\cf2 \cb3   border: 1px solid #666;\cf0 \cb1 \
+\cf2 \cb3   border-radius: 5px;\cf0 \cb1 \
+\cf2 \cb3   box-shadow: 3px 3px 3px #444;\cf0 \cb1 \
+\cf2 \cb3   background: linear-gradient(0deg, #ffa50040, orange);\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\cf2 \cb3 h1 \{\cf0 \cb1 \
+\cf2 \cb3   margin-top: 0;\cf0 \cb1 \
+\cf2 \cb3   color: maroon;\cf0 \cb1 \
+\cf2 \cb3   font-family: Haettenschweiler;\cf0 \cb1 \
+\cf2 \cb3   text-shadow: 1px 1px white;\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\cf2 \cb3 label \{\cf0 \cb1 \
+\cf2 \cb3   display: block;\cf0 \cb1 \
+\cf2 \cb3   padding-bottom: 0.5em;\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\cf2 \cb3 label span \{\cf0 \cb1 \
+\cf2 \cb3   display: inline-block;\cf0 \cb1 \
+\cf2 \cb3   width : 6em;\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\cf2 \cb3 .label \{\cf0 \cb1 \
+\cf2 \cb3   display: inline-block;\cf0 \cb1 \
+\cf2 \cb3   width : 7em;\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\cf2 \cb3 option[disabled] \{\cf0 \cb1 \
+\cf2 \cb3   font-style: italic;\cf0 \cb1 \
+\cf2 \cb3   color: #ccc;\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\cf2 \cb3 .hidden \{\cf0 \cb1 \
+\cf2 \cb3   display: none;\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\cf2 \cb3 #map \{\cf0 \cb1 \
+\cf2 \cb3   width:750px;\cf0 \cb1 \
+\cf2 \cb3   height:500px;\cf0 \cb1 \
+\cf2 \cb3   border: 1px solid black;\cf0 \cb1 \
+\cf2 \cb3   float: right;\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\cf2 \cb3 #left \{\cf0 \cb1 \
+\cf2 \cb3   min-height:502px;\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\cf2 \cb3 </style>\cf0 \cb1 \
+\
+\cf2 \cb3 <main>\cf0 \cb1 \
+\
+\cf2 \cb3 <!-- Zone pour l'insertion de la carte via Leaflet -->\cf0 \cb1 \
+\cf2 \cb3 <div id="map"></div>\cf0 \cb1 \
+\
+\cf2 \cb3 <!-- partie gauche de l'\'e9cran -->\cf0 \cb1 \
+\cf2 \cb3 <div id="left">\cf0 \cb1 \
+\cf2 \cb3 <h1>Countries of the world</h1>\cf0 \cb1 \
+\
+\cf2 \cb3 <div>\cf0 \cb1 \
+\cf2 \cb3 <label><span> </span> <button id="bouton">Commencer</button>\cf0 \cb1 \
+\cf2 \cb3 </div>\cf0 \cb1 \
+\
+\cf2 \cb3 <!-- Zone pour l'affichage dynamique des descriptions -->\cf0 \cb1 \
+\cf2 \cb3 <div id="country_data" class="hidden">\cf0 \cb1 \
+\cf2 \cb3  <h1 id="country_name"></h1>\cf0 \cb1 \
+\cf2 \cb3  <div><span class="label">Continent:</span><span class="value" id="continent"></span></div>\cf0 \cb1 \
+\cf2 \cb3  <div><span class="label">Capital:</span><span class="value" id="capital"></span></div>\cf0 \cb1 \
+\cf2 \cb3  <div><span class="label">Latitude:</span><span class="value" id="latitude"></span></div>\cf0 \cb1 \
+\cf2 \cb3  <div><span class="label">Longitude:</span><span class="value" id="longitude"></span></div>\cf0 \cb1 \
+\cf2 \cb3  <div><span class="label">Read more on:</span><a id="wp" href="">wikipedia</a></div>\cf0 \cb1 \
+\cf2 \cb3 </div>\cf0 \cb1 \
+\
+\cf2 \cb3 <!-- Zone pour l'affichage dynamique des messages d'erreur -->\cf0 \cb1 \
+\cf2 \cb3 <div id="error_msg"></div>\cf0 \cb1 \
+\
+\cf2 \cb3 <div id="reponse"></div>\cf0 \cb1 \
+\
+\cf2 \cb3 </div>\cf0 \cb1 \
+\cf2 \cb3 </main>\cf0 \cb1 \
+\
+\
+\
+\
+\
+\
+\
+\
+\cf2 \cb3 <script>\cf0 \cb1 \
+\
+\cf2 \cb3 // cr\'e9ation d'une carte dans la balise div "map",\cf0 \cb1 \
+\cf2 \cb3 window.leaflet_map = L.map('map',\{zoomSnap: 0.01\});\cf0 \cb1 \
+\
+\cf2 \cb3 // ajout d'une couche de dalles OpenStreetMap\cf0 \cb1 \
+\cf2 \cb3 L.tileLayer('http://\{s\}{\field{\*\fldinst{HYPERLINK "https://l.facebook.com/l.php?u=http%3A%2F%2F.tile.osm.org%2F%7Bz%7D%2F%7Bx%7D%2F%7By%7D.png%3Ffbclid%3DIwAR1bzm84VMS-2PtU0gO5GoRgIer_VuE6Xvi4pB9CPIlSQ4Z-0wwACgnVtBM&h=AT1A1WgD2pd7dxCY05omirj2T3R6hYBVzyZxnQqI2Ghif0sPDbWMW-QMraxPJ9WY2piRnEwLUItpghtqIVunP44Vj1h3IovhYyvepDTW2kI2hWX3UTw0tPYeDcDpqyc914tMmYTi"}}{\fldrslt \ul .tile.osm.org/\{z\}/\{x\}/\{y\}.png}}', \{\cf0 \cb1 \
+\cf2 \cb3   attribution: '&copy; <a href="{\field{\*\fldinst{HYPERLINK "http://osm.org/copyright?fbclid=IwAR1u66Fw_kW92HE--7h3Uq8Hs0aN7Dv3Q6sZACwe7yYZeiNNGM6loOtfBNQ"}}{\fldrslt \ul http://osm.org/copyright}}">OpenStreetMap</a> contributors'\cf0 \cb1 \
+\cf2 \cb3   \}).addTo(window.leaflet_map);\cf0 \cb1 \
+\
+\cf2 \cb3 // affichage de l'\'e9chelle\cf0 \cb1 \
+\cf2 \cb3 L.control.scale(\{imperial:false\}).addTo(leaflet_map);\cf0 \cb1 \
+\
+\
+\
+\cf2 \cb3 document.getElementById('bouton').addEventListener('click', envoiformulaire);\cf0 \cb1 \
+\
+\
+\
+\
+\cf2 \cb3 // gestion de la r\'e9ponse \'e0 la requ\'eate de r\'e9cup\'e9ration de la liste des pays\cf0 \cb1 \
+\cf2 \cb3 function init_map(response) \{\cf0 \cb1 \
+\cf2 \cb3   var data = JSON.parse(response);\cf0 \cb1 \
+\
+\cf2 \cb3   // calcul de la moyenne des latitudes et des longitudes\cf0 \cb1 \
+\cf2 \cb3   var meanlat = data.reduce((s,v) => s+v.latitude,0)/data.length;\cf0 \cb1 \
+\cf2 \cb3   var meanlon = data.reduce((s,v) => s+v.longitude,0)/data.length;\cf0 \cb1 \
+\
+\cf2 \cb3   // positionne la vue sur un point donn\'e9 et d\'e9finit un niveau de zoom\cf0 \cb1 \
+\cf2 \cb3   window.leaflet_map.setView([meanlat,meanlon], 3);\cf0 \cb1 \
+\
+\cf2 \cb3     // pour chacun des enregistrements renvoy\'e9s\cf0 \cb1 \
+\cf2 \cb3     data.forEach(country => \{\cf0 \cb1 \
+\
+\cf2 \cb3       // insertion d'un marqueur \'e0 la position de la capitale\cf0 \cb1 \
+\cf2 \cb3       var marker = L.marker(\cf0 \cb1 \
+\cf2 \cb3         [country.latitude,country.longitude],\cf0 \cb1 \
+\cf2 \cb3         \{icon: marker_icons\});\cf0 \cb1 \
+\cf2 \cb3       marker.addTo(leaflet_map);\cf0 \cb1 \
+\
+\cf2 \cb3       // attachement d'un popup au marqueur\cf0 \cb1 \
+\cf2 \cb3       var popup = L.popup(\{closeButton:false\}).setContent(country.capital)\cf0 \cb1 \
+\cf2 \cb3       marker.bindPopup(popup);\cf0 \cb1 \
+\cf2 \cb3       marker.on('mouseover',e => e.target.openPopup());\cf0 \cb1 \
+\cf2 \cb3       marker.on('mouseout',e => e.target.closePopup());\cf0 \cb1 \
+\
+\cf2 \cb3       // gestion du clic sur le popup\cf0 \cb1 \
+\cf2 \cb3       marker.addEventListener('click',marker_click);\cf0 \cb1 \
+\
+\cf2 \cb3       // ajout d'une propri\'e9t\'e9 personnalis\'e9e au marqueur\cf0 \cb1 \
+\cf2 \cb3       marker.id = country.wp;\cf0 \cb1 \
+\cf2 \cb3     \});\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\
+\cf2 \cb3 // icones jaunes\cf0 \cb1 \
+\cf2 \cb3 var marker_icons = create_marker_icon("yellow");\cf0 \cb1 \
+\
+\cf2 \cb3 // fonction de cr\'e9ation des ic\'f4nes color\'e9es\cf0 \cb1 \
+\cf2 \cb3 function create_marker_icon(color) \{\cf0 \cb1 \
+\cf2 \cb3   var resize = x => x*0.6; // on rapetisse les ic\'f4nes\cf0 \cb1 \
+\cf2 \cb3   return new L.Icon(\{\cf0 \cb1 \
+\cf2 \cb3     iconAnchor: [12, 41].map(resize),\cf0 \cb1 \
+\cf2 \cb3     iconRetinaUrl: '/images/marker-icon-2x-'+color+'.png',\cf0 \cb1 \
+\cf2 \cb3     iconSize: [25, 41].map(resize),\cf0 \cb1 \
+\cf2 \cb3     iconUrl: '/images/marker-icon-'+color+'.png',\cf0 \cb1 \
+\cf2 \cb3     popupAnchor: [1, -34].map(resize),\cf0 \cb1 \
+\cf2 \cb3     shadowSize: [41, 41].map(resize),\cf0 \cb1 \
+\cf2 \cb3     shadowUrl: '/images/marker-shadow.png',\cf0 \cb1 \
+\cf2 \cb3     tooltipAnchor: [41, 41].map(resize)\cf0 \cb1 \
+\cf2 \cb3   \});\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\
+\
+\cf2 \cb3 // gestion d'une r\'e9ponse d'erreur\cf0 \cb1 \
+\cf2 \cb3 function display_error(code,message) \{\cf0 \cb1 \
+\cf2 \cb3   window.country_data.classList.add('hidden');\cf0 \cb1 \
+\cf2 \cb3   window.error_msg.innerHTML = this.statusText;\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\
+\
+\cf2 \cb3 // gestion du clic sur un marqueur\cf0 \cb1 \
+\cf2 \cb3 function marker_click(e) \{\cf0 \cb1 \
+\cf2 \cb3   var url = '/service/country/'+e.target.id;\cf0 \cb1 \
+\cf2 \cb3   AJAX( url,display_data,display_error);\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\cf2 \cb3 function display_data(response) \{\cf0 \cb1 \
+\cf2 \cb3   var data = JSON.parse(response);\cf0 \cb1 \
+\
+\cf2 \cb3   window.error_msg.innerHTML = ''\cf0 \cb1 \
+\cf2 \cb3   window.country_data.classList.remove('hidden');\cf0 \cb1 \
+\cf2 \cb3   window.country_data.style.display = 'block';\cf0 \cb1 \
+\cf2 \cb3   window.country_name.textContent = data.name;\cf0 \cb1 \
+\cf2 \cb3   window.capital.textContent = data.capital;\cf0 \cb1 \
+\cf2 \cb3   window.latitude.textContent = data.latitude.toFixed(3);\cf0 \cb1 \
+\cf2 \cb3   window.longitude.textContent = data.longitude.toFixed(3);\cf0 \cb1 \
+\cf2 \cb3   window.wp.href = '{\field{\*\fldinst{HYPERLINK "https://l.facebook.com/l.php?u=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2F%27%2Bdata.wp%3Ffbclid%3DIwAR0YkOgv7UnC63h5J5r9hj50CG2qEULu1ZCpurMgJYG1nNlcyqrtbkBb-zE&h=AT1A1WgD2pd7dxCY05omirj2T3R6hYBVzyZxnQqI2Ghif0sPDbWMW-QMraxPJ9WY2piRnEwLUItpghtqIVunP44Vj1h3IovhYyvepDTW2kI2hWX3UTw0tPYeDcDpqyc914tMmYTi"}}{\fldrslt \ul https://en.wikipedia.org/wiki/'+data.wp}};\cf0 \cb1 \
+\cf2 \cb3   window.continent.textContent = data.continent.split(',').map(c => \{\cf0 \cb1 \
+\cf2 \cb3     return c.charAt(0).toUpperCase() + c.slice(1);\cf0 \cb1 \
+\cf2 \cb3   \}).join(', ');\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\
+\cf2 \cb3 // r\'e9cup\'e9ration des coordonn\'e9es du clic,\cf0 \cb1 \
+\cf2 \cb3 // pour aide au positonnement manuel \'e9ventuel des capitales\cf0 \cb1 \
+\cf2 \cb3 window.leaflet_map.addEventListener('dblclick', e => \{\cf0 \cb1 \
+\cf2 \cb3    console.log(e);\cf0 \cb1 \
+\cf2 \cb3    lat = e.latlng.lat;\cf0 \cb1 \
+\cf2 \cb3    lon = e.latlng.lng;\cf0 \cb1 \
+\cf2 \cb3    console.log(lat,lon);\cf0 \cb1 \
+\cf2 \cb3 \});\cf0 \cb1 \
+\
+\cf2 \cb3 function envoiformulaire(e) \{\cf0 \cb1 \
+\cf2 \cb3    var xhr = new XMLHttpRequest();\cf0 \cb1 \
+\cf2 \cb3    // requ\'eate au serveur\cf0 \cb1 \
+\cf2 \cb3    xhr.open('GET','/service/countries/africa',true);\cf0 \cb1 \
+\cf2 \cb3    xhr.onload = function() \{   // fonction callback\cf0 \cb1 \
+\cf2 \cb3     if ( this.status = 200 ) init_map(this.responseText);\cf0 \cb1 \
+\cf2 \cb3     else error(this.status,this.statusText);\cf0 \cb1 \
+\cf2 \cb3    // var data = JSON.parse(response);\cf0 \cb1 \
+\cf2 \cb3    \};\cf0 \cb1 \
+\cf2 \cb3   xhr.send();\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\
+\cf2 \cb3 // gestion des requ\'eates AJAX\cf0 \cb1 \
+\cf2 \cb3 function AJAX(url,cb,error) \{\cf0 \cb1 \
+\cf2 \cb3   var xhr = new XMLHttpRequest(); \cf0 \cb1 \
+\cf2 \cb3   xhr.open('GET',url,true);\cf0 \cb1 \
+\cf2 \cb3   xhr.onload = function() \{\cf0 \cb1 \
+\cf2 \cb3     if ( this.status = 200 ) cb(this.responseText);\cf0 \cb1 \
+\cf2 \cb3     else error(this.status,this.statusText);\cf0 \cb1 \
+\cf2 \cb3   \};\cf0 \cb1 \
+\cf2 \cb3   xhr.send();\cf0 \cb1 \
+\cf2 \cb3 \}\cf0 \cb1 \
+\
+\cf2 \cb3 </script>}
