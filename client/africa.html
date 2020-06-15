@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<title>TD3-s7.html</title>
+<script src="leaflet.js"> // Bibliothèque Leaflet : http://leafletjs.com/ </script>
+<link rel='stylesheet' type="text/css" href='https://fonts.googleapis.com/css?family=Roboto'>
+<link rel="stylesheet" type="text/css" href="leaflet.css" /> 
+<meta charset='utf-8'>
+<style>
+body {
+  font-family: Roboto, sans-serif;
+}
+main {
+  margin: 20px;
+  padding: 10px;
+  border: 1px solid #666;
+  border-radius: 5px;
+  box-shadow: 3px 3px 3px #444;
+  background: linear-gradient(0deg, #ffa50040, orange);
+}
+h1 {
+  margin-top: 0;
+  color: maroon;
+  font-family: Haettenschweiler;
+  text-shadow: 1px 1px white;
+}
+label {
+  display: block;
+  padding-bottom: 0.5em;
+}
+label span {
+  display: inline-block;
+  width : 6em;
+}
+.label {
+  display: inline-block;
+  width : 7em;
+}
+option[disabled] {
+  font-style: italic;
+  color: #ccc;
+}
+.hidden {
+  display: none;
+}
+#map {
+  width:750px;
+  height:500px;
+  border: 1px solid black;
+  float: right;
+}
+#left {
+  min-height:502px;
+}
+</style>
+
+<main>
+
+<!-- Zone pour l'insertion de la carte via Leaflet -->
+<div id="map"></div>
+
+<!-- partie gauche de l'écran -->
+<div id="left">
+<h1>Countries of the world</h1>
+
+<div>
+<label><span> </span> <button id="bouton">Commencer</button>
+</div>
+
+<!-- Zone pour l'affichage dynamique des descriptions -->
+<div id="country_data" class="hidden">
+ <h1 id="country_name"></h1>
+ <div><span class="label">Continent:</span><span class="value" id="continent"></span></div>
+ <div><span class="label">Capital:</span><span class="value" id="capital"></span></div>
+ <div><span class="label">Latitude:</span><span class="value" id="latitude"></span></div>
+ <div><span class="label">Longitude:</span><span class="value" id="longitude"></span></div>
+ <div><span class="label">Read more on:</span><a id="wp" href="">wikipedia</a></div>
+</div>
+
+<!-- Zone pour l'affichage dynamique des messages d'erreur -->
+<div id="error_msg"></div>
+
+<div id="reponse"></div>
+
+</div>
+</main>
+
+
+
+
+
+
+
+
+<script>
+
+// création d'une carte dans la balise div "map",
+window.leaflet_map = L.map('map',{zoomSnap: 0.01});
+
+// ajout d'une couche de dalles OpenStreetMap
+L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+  attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(window.leaflet_map);
+
+// affichage de l'échelle
+L.control.scale({imperial:false}).addTo(leaflet_map);
+
+
+
+document.getElementById('bouton').addEventListener('click', envoiformulaire);
+
+
+
+
+// gestion de la réponse à la requête de récupération de la liste des pays
+function init_map(response) {
+  var data = JSON.parse(response);
+
+  // calcul de la moyenne des latitudes et des longitudes
+  var meanlat = data.reduce((s,v) => s+v.latitude,0)/data.length;
+  var meanlon = data.reduce((s,v) => s+v.longitude,0)/data.length;
+
+  // positionne la vue sur un point donné et définit un niveau de zoom
+  window.leaflet_map.setView([meanlat,meanlon], 3);
+
+    // pour chacun des enregistrements renvoyés
+    data.forEach(country => {
+
+      // insertion d'un marqueur à la position de la capitale
+      var marker = L.marker(
+        [country.latitude,country.longitude],
+        {icon: marker_icons});
+      marker.addTo(leaflet_map);
+
+      // attachement d'un popup au marqueur
+      var popup = L.popup({closeButton:false}).setContent(country.capital)
+      marker.bindPopup(popup);
+      marker.on('mouseover',e => e.target.openPopup());
+      marker.on('mouseout',e => e.target.closePopup());
+
+      // gestion du clic sur le popup
+      marker.addEventListener('click',marker_click);
+
+      // ajout d'une propriété personnalisée au marqueur
+      marker.id = country.wp;
+    });
+}
+
+// icones jaunes
+var marker_icons = create_marker_icon("yellow");
+
+// fonction de création des icônes colorées
+function create_marker_icon(color) {
+  var resize = x => x*0.6; // on rapetisse les icônes
+  return new L.Icon({
+    iconAnchor: [12, 41].map(resize),
+    iconRetinaUrl: '/images/marker-icon-2x-'+color+'.png',
+    iconSize: [25, 41].map(resize),
+    iconUrl: '/images/marker-icon-'+color+'.png',
+    popupAnchor: [1, -34].map(resize),
+    shadowSize: [41, 41].map(resize),
+    shadowUrl: '/images/marker-shadow.png',
+    tooltipAnchor: [41, 41].map(resize)
+  });
+}
+
+
+// gestion d'une réponse d'erreur
+function display_error(code,message) {
+  window.country_data.classList.add('hidden');
+  window.error_msg.innerHTML = this.statusText;
+}
+
+
+// gestion du clic sur un marqueur
+function marker_click(e) {
+  var url = '/service/country/'+e.target.id;
+  AJAX( url,display_data,display_error);
+}
+function display_data(response) {
+  var data = JSON.parse(response);
+
+  window.error_msg.innerHTML = ''
+  window.country_data.classList.remove('hidden');
+  window.country_data.style.display = 'block';
+  window.country_name.textContent = data.name;
+  window.capital.textContent = data.capital;
+  window.latitude.textContent = data.latitude.toFixed(3);
+  window.longitude.textContent = data.longitude.toFixed(3);
+  window.wp.href = 'https://en.wikipedia.org/wiki/'+data.wp;
+  window.continent.textContent = data.continent.split(',').map(c => {
+    return c.charAt(0).toUpperCase() + c.slice(1);
+  }).join(', ');
+}
+
+// récupération des coordonnées du clic,
+// pour aide au positonnement manuel éventuel des capitales
+window.leaflet_map.addEventListener('dblclick', e => {
+   console.log(e);
+   lat = e.latlng.lat;
+   lon = e.latlng.lng;
+   console.log(lat,lon);
+});
+
+function envoiformulaire(e) {
+   var xhr = new XMLHttpRequest();
+   // requête au serveur
+   xhr.open('GET','/service/countries/africa',true);
+   xhr.onload = function() {   // fonction callback
+    if ( this.status = 200 ) init_map(this.responseText);
+    else error(this.status,this.statusText);
+   // var data = JSON.parse(response);
+   };
+  xhr.send();
+}
+
+// gestion des requêtes AJAX
+function AJAX(url,cb,error) {
+  var xhr = new XMLHttpRequest(); 
+  xhr.open('GET',url,true);
+  xhr.onload = function() {
+    if ( this.status = 200 ) cb(this.responseText);
+    else error(this.status,this.statusText);
+  };
+  xhr.send();
+}
+
+</script>

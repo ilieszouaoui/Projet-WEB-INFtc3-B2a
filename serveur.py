@@ -9,6 +9,7 @@ Created on Wed Jun 10 09:45:54 2020
 import http.server
 import socketserver
 import sqlite3
+import json
 
 from urllib.parse import urlparse, parse_qs, unquote
 
@@ -117,7 +118,7 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
     
   def db_get_countries(self):
     c = conn.cursor()
-    sql = 'SELECT wp, capital, latitude, longitude from countries'
+    sql = 'SELECT wp, capital, latitude, longitude from countries WHERE latitude IS NOT null'
     c.execute(sql)
     return c.fetchall()
 
