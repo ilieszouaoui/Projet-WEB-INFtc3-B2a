@@ -23,7 +23,7 @@ def get_coords(info): # format : {'lat': '139', 'lon': '35'}
         lon = int(m.group(1))+int(m.group(2))/60
         if m.group(3)=='S': lon=lon*-1
         lat = int(m.group(4))+int(m.group(5))/60
-        if m.group(6)=='W': lon=lon*-1
+        if m.group(6)=='W': lat=lat*-1
         return {'lat':str(lat),'lon':str(lon)}
     except:
         print(' Could not parse coordinates de {}'.format(info['conventional_long_name']))
