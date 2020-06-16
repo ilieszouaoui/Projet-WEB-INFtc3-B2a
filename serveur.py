@@ -10,6 +10,7 @@ import http.server
 import socketserver
 import sqlite3
 import json
+import math
 
 from urllib.parse import urlparse, parse_qs, unquote
 
@@ -37,6 +38,9 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
     elif self.path_info[0] == 'service' and self.path_info[1] == 'country' and len(self.path_info) > 2:
       self.send_json_country(self.path_info[2])
     
+    elif self.path_info[0] == 'service' and self.path_info[1] == 'distance' and len(self.path_info) > 2:
+      self.send_json_distance(self.path_info[2],self.path_info[3],self.path_info[4])
+      
     # ou pas...
     else:
       self.send_static()
@@ -115,6 +119,32 @@ class RequestHandler(http.server.SimpleHTTPRequestHandler):
       json_data = json.dumps(data, indent=8)
       headers = [('Content-Type','application/json')]
       self.send(json_data,headers)
+      
+  def send_json_distance(self,country,lat,lon):
+    r = self.db_get_distance(country)
+    lat=float(lat)*math.pi/180;
+    lon=float(lon)*math.pi/180;
+    # on n'a pas trouvé le pays demandé
+    d=6378*math.acos(math.sin(lat)*math.sin(r['latitude']*math.pi/180)+math.cos(lat)*math.cos(r['latitude']*math.pi/180)*math.cos(r['longitude']*math.pi/180-lon))
+    if r == None:
+      self.send_error(404,'Country not found')
+
+    # on renvoie un dictionnaire au format JSON
+    else:
+      data = {}
+      data['distance']=d
+      json_data = json.dumps(data, indent=4)
+      headers = [('Content-Type','application/json')]
+      self.send(json_data,headers)
+      
+  def db_get_distance(self,country):
+    # préparation de la requête SQL
+    c = conn.cursor()
+    sql = 'SELECT latitude, longitude from countries WHERE wp=?'
+
+    # récupération de l'information (ou pas)
+    c.execute(sql,(country,))
+    return c.fetchone()
     
   def db_get_countries(self):
     c = conn.cursor()

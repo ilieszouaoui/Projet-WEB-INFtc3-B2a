@@ -16,7 +16,7 @@
 <h1>Countries of Africa</h1>
 
 <div>
-<label><span> </span> <button id="bouton">Commencer</button>
+<label><span> </span> <button id="bouton">Launch</button>
 </div>
 
 <!-- Zone pour l'affichage dynamique des descriptions -->
@@ -35,7 +35,13 @@
 <!-- Zone pour l'affichage dynamique des messages d'erreur -->
 <div id="error_msg"></div>
 
-<div id="reponse"></div>
+<h1>Distance to</h1>
+
+<div>
+<label><span>Country :</span><input id="pays" name="pays"></label>
+</div>
+<div><span class="label">Distance (in km):</span><span class="value" id="distance"></span></div>
+
 
 </div>
 </main>
@@ -45,10 +51,11 @@
 <h1>Conseils d'utilisation : </h1>
 
 <ol>
-<li> Initialiser la carte en cliquant sur le bouton "commencer"</li>
+<li> Initialiser la carte en cliquant sur le bouton "launch"</li>
 <li> Sélectionner l'icône sur la capitale d'un pays</li>
 <li> Prendre connaissance des informations sur le pays</li>
 <li> Cliquer sur le lien Wikipedia pour plus d'informations</li>
+<li> Rentrer le nom d'un pays dans la case "country" puis double-cliquer sur la carte pour avoir la distance entre le pays et ce point</li>
 </ol>
 
 <div>
@@ -174,6 +181,8 @@ window.leaflet_map.addEventListener('dblclick', e => {
    console.log(lat,lon);
 });
 
+window.leaflet_map.addEventListener('dblclick', envoidistance);
+
 function envoiformulaire(e) {
    var xhr = new XMLHttpRequest();
    // requête au serveur
@@ -193,6 +202,25 @@ function AJAX(url,cb,error) {
   xhr.onload = function() {
     if ( this.status = 200 ) cb(this.responseText);
     else error(this.status,this.statusText);
+  };
+  xhr.send();
+}
+
+function envoidistance(e) {
+   var xhr = new XMLHttpRequest(); 
+       lat = e.latlng.lat;
+       lon = e.latlng.lng;
+   // on récupère le nom du pays
+   var ps = document.getElementById('pays').value;
+
+   // requête au serveur
+   xhr.open('GET','/service/distance/'+ps+'/'+lat+'/'+lon,true);
+  
+   xhr.onload = function() {   // fonction callback
+
+    // affichage informations renvoyées
+    var dist = JSON.parse(this.responseText);
+    window.distance.textContent = dist.distance.toFixed(0);
   };
   xhr.send();
 }
